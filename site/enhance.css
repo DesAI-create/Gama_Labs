@@ -1,0 +1,85 @@
+/* Améliorations de navigation ajoutées par-dessus l'export Claude Design */
+/* Le moteur injecte parfois « html, body { height: 100% } ». Avec overflow-x:hidden sur body,
+   c'est alors body qui défile au lieu de la fenêtre : ancres, retour en haut et défilement fluide cassés. */
+html, body { height: auto !important; min-height: 100%; }
+body { overflow-x: clip !important; }
+section[id], #top { scroll-margin-top: 84px; }
+
+/* Lien de la section en cours dans le menu */
+[data-navlinks] a { position: relative; transition: color .25s ease; }
+html[data-active="services"] [data-navlinks] a[href="#services"],
+html[data-active="realisations"] [data-navlinks] a[href="#realisations"],
+html[data-active="methode"] [data-navlinks] a[href="#methode"],
+html[data-active="equipe"] [data-navlinks] a[href="#equipe"],
+html[data-active="formation"] [data-navlinks] a[href="#formation"],
+html[data-active="faq"] [data-navlinks] a[href="#faq"] { color: #1D4ED8 !important; }
+html[data-active="services"] [data-navlinks] a[href="#services"]::after,
+html[data-active="realisations"] [data-navlinks] a[href="#realisations"]::after,
+html[data-active="methode"] [data-navlinks] a[href="#methode"]::after,
+html[data-active="equipe"] [data-navlinks] a[href="#equipe"]::after,
+html[data-active="formation"] [data-navlinks] a[href="#formation"]::after,
+html[data-active="faq"] [data-navlinks] a[href="#faq"]::after {
+  content: ""; position: absolute; left: 50%; bottom: -8px; width: 5px; height: 5px;
+  margin-left: -2.5px; border-radius: 50%; background: #3B82F6;
+}
+
+/* Menu mobile */
+.gm-burger {
+  position: fixed; z-index: 70; top: 24px; right: max(20px, calc(50% - 540px + 8px));
+  width: 44px; height: 44px; border-radius: 999px; border: 0; background: #111; color: #fff;
+  display: none; place-items: center; cursor: pointer; box-shadow: 0 8px 20px -10px rgba(0,0,0,.5);
+}
+.gm-burger span, .gm-burger span::before, .gm-burger span::after {
+  display: block; width: 18px; height: 2px; border-radius: 2px; background: currentColor;
+  transition: transform .3s ease, background .3s ease; position: relative;
+}
+.gm-burger span::before, .gm-burger span::after { content: ""; position: absolute; left: 0; }
+.gm-burger span::before { top: -6px; }
+.gm-burger span::after { top: 6px; }
+.gm-open .gm-burger span { background: transparent; }
+.gm-open .gm-burger span::before { transform: translateY(6px) rotate(45deg); }
+.gm-open .gm-burger span::after { transform: translateY(-6px) rotate(-45deg); }
+
+.gm-menu {
+  position: fixed; inset: 0; z-index: 65; background: rgba(247,247,244,.97);
+  backdrop-filter: blur(18px); -webkit-backdrop-filter: blur(18px);
+  display: flex; flex-direction: column; justify-content: center; gap: 6px;
+  padding: 96px 28px 40px; opacity: 0; visibility: hidden; transition: opacity .3s ease, visibility .3s;
+}
+.gm-open .gm-menu { opacity: 1; visibility: visible; }
+.gm-menu a {
+  font-family: 'Bricolage Grotesque', system-ui, sans-serif; font-weight: 700; font-size: clamp(30px, 9vw, 44px);
+  letter-spacing: -.03em; color: #111; padding: 6px 0; display: flex; align-items: baseline; gap: 14px;
+  transform: translateY(14px); opacity: 0; transition: transform .45s cubic-bezier(.2,.8,.2,1), opacity .45s ease, color .2s;
+}
+.gm-menu a small { font-family: Geist, system-ui, sans-serif; font-size: 13px; font-weight: 600; color: #9AA2B1; letter-spacing: 0; }
+.gm-open .gm-menu a { transform: none; opacity: 1; }
+.gm-menu a[aria-current="true"] { color: #1D4ED8; }
+.gm-menu .gm-cta {
+  margin-top: 22px; align-self: flex-start; font-family: Geist, system-ui, sans-serif; font-size: 17px; font-weight: 600;
+  letter-spacing: 0; background: #111; color: #fff; padding: 14px 22px; border-radius: 999px;
+}
+.gm-menu .gm-cta, .gm-menu .gm-cta:hover { color: #fff; }
+
+@media (max-width: 959px) {
+  .gm-burger { display: grid; }
+  /* Le bouton « Démarrer un projet » de la barre est coupé sur mobile : il passe dans le menu */
+  nav > a[data-mag][href="#contact"] { display: none !important; }
+}
+.gm-open { overflow: hidden; }
+
+/* Retour en haut */
+.gm-top {
+  position: fixed; z-index: 55; right: 20px; bottom: calc(20px + env(safe-area-inset-bottom, 0px));
+  width: 46px; height: 46px; border-radius: 50%; border: 1px solid rgba(0,0,0,.06); background: #fff; color: #111;
+  display: grid; place-items: center; cursor: pointer; box-shadow: 0 12px 28px -12px rgba(30,40,80,.4);
+  opacity: 0; transform: translateY(12px); pointer-events: none; transition: opacity .3s ease, transform .3s ease;
+}
+.gm-top.on { opacity: 1; transform: none; pointer-events: auto; }
+.gm-top:hover { background: #111; color: #fff; }
+
+.gm-burger:focus-visible, .gm-top:focus-visible, .gm-menu a:focus-visible { outline: 3px solid #93C5FD; outline-offset: 3px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .gm-menu, .gm-menu a, .gm-top, .gm-burger span, .gm-burger span::before, .gm-burger span::after { transition: none; }
+}

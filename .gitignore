@@ -1,0 +1,14 @@
+# Documents de travail hors site
+Questionnaire Gama_labs.html
+questionnaire-fondateurs.html
+PROMPT_CLAUDE_DESIGN.md
+Design updates and Arc inspiration*/
+.claude/
+
+# Divers
+__pycache__/
+*.pyc
+.DS_Store
+Thumbs.db
+desktop.ini
+.netlify/
