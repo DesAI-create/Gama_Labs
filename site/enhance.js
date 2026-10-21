@@ -149,7 +149,17 @@
     updateActive();
     if (location.hash) {
       var t = document.getElementById(location.hash.slice(1));
-      if (t) { revealIn(t); t.scrollIntoView(); }
+      /* La page grandit encore pendant le chargement (images, vidéo) : on recale la position deux fois. */
+      if (t) {
+        revealIn(t); t.scrollIntoView();
+        var touched = false;
+        ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (ev) {
+          window.addEventListener(ev, function () { touched = true; }, { once: true, passive: true });
+        });
+        [700, 1800].forEach(function (ms) {
+          setTimeout(function () { if (!touched && Math.abs(t.getBoundingClientRect().top - 84) > 40) t.scrollIntoView(); }, ms);
+        });
+      }
     }
   })();
 })();
