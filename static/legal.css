@@ -1,0 +1,8 @@
+body{margin:0;background:#F7F7F4;color:#111;font:16px/1.7 Geist,system-ui,sans-serif;padding-inline:20px}
+main{max-width:720px;margin:0 auto;padding-block:56px 80px}
+a{color:#1D4ED8}
+.back{display:inline-flex;gap:8px;font-weight:600;text-decoration:none;color:#111;margin-bottom:40px}
+h1{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:clamp(34px,6vw,52px);line-height:1.05;letter-spacing:-.03em;margin:0 0 24px}
+h2{font-family:'Bricolage Grotesque',system-ui,sans-serif;font-size:22px;letter-spacing:-.02em;margin:36px 0 8px}
+.todo{background:#FFF3EA;color:#A83F08;padding:2px 8px;border-radius:6px;font-weight:600}
+.note{background:#fff;border:1px solid rgba(0,0,0,.06);border-radius:16px;padding:16px 18px;color:#5B5F6B}
