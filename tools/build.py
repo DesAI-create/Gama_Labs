@@ -57,13 +57,19 @@ for rel in used:
     html = html.replace(rel, dst_rel)
 print(f"Images : {len(used)} fichiers, {before/1e6:.1f} Mo -> {after/1e6:.1f} Mo")
 
-# Icônes (onglet, iPhone, Android) à partir du carré dégradé + cube blanc
-icon = Image.open(SRC / "assets/icon-gama.png").convert("RGBA")
-icon.resize((48, 48), Image.LANCZOS).save(OUT / "favicon.png", optimize=True)
-icon.save(OUT / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48)])
-icon.convert("RGB").resize((180, 180), Image.LANCZOS).save(OUT / "apple-touch-icon.png", optimize=True)
-for s in (192, 512):
-    icon.resize((s, s), Image.LANCZOS).save(OUT / f"icon-{s}.png", optimize=True)
+# Icônes (onglet, iPhone, Android) : le cube noir de Gama, centré dans un carré
+cube = Image.open(SRC / "assets/logo-gama-cube.png").convert("RGBA")
+cube = cube.crop(cube.getbbox())
+def square(img, size, pad, bg=(0, 0, 0, 0)):
+    c = Image.new("RGBA", (size, size), bg)
+    t = img.copy(); t.thumbnail((size - 2 * pad, size - 2 * pad), Image.LANCZOS)
+    c.paste(t, ((size - t.width) // 2, (size - t.height) // 2), t)
+    return c
+square(cube, 48, 2).save(OUT / "favicon.png", optimize=True)
+square(cube, 256, 10).save(OUT / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48)])
+square(cube, 180, 30, (255, 255, 255, 255)).convert("RGB").save(OUT / "apple-touch-icon.png", optimize=True)
+for s_ in (192, 512):
+    square(cube, s_, s_ // 6, (255, 255, 255, 255)).save(OUT / f"icon-{s_}.png", optimize=True)
 
 # Image de partage : le logo tel quel, sans modification
 shutil.copy(SRC / "assets/icon-gama.png", OUT / "og-image.png")
