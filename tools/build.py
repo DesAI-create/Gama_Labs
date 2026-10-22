@@ -58,7 +58,6 @@ for rel in used:
 print(f"Images : {len(used)} fichiers, {before/1e6:.1f} Mo -> {after/1e6:.1f} Mo")
 
 # Icônes (onglet, iPhone, Android) à partir du carré dégradé + cube blanc
-from PIL import ImageDraw, ImageFont
 icon = Image.open(SRC / "assets/icon-gama.png").convert("RGBA")
 icon.resize((48, 48), Image.LANCZOS).save(OUT / "favicon.png", optimize=True)
 icon.save(OUT / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48)])
@@ -66,29 +65,8 @@ icon.convert("RGB").resize((180, 180), Image.LANCZOS).save(OUT / "apple-touch-ic
 for s in (192, 512):
     icon.resize((s, s), Image.LANCZOS).save(OUT / f"icon-{s}.png", optimize=True)
 
-# Image de partage 1200x630 : même dégradé, cube, nom et slogan
-W, H = 1200, 630
-c1, c2 = (91, 222, 230), (1, 75, 174)
-og = Image.new("RGB", (W, H))
-px = og.load()
-for x in range(W):
-    t = x / (W - 1); col = tuple(round(a + (b - a) * t) for a, b in zip(c1, c2))
-    for y in range(H): px[x, y] = col
-cube = icon.crop((120, 120, 520, 520)).resize((300, 300), Image.LANCZOS)   # cube blanc seul, fond identique au dégradé
-mask = Image.new("L", cube.size, 0)
-cpx, mpx = cube.load(), mask.load()
-for x in range(cube.width):
-    for y in range(cube.height):
-        r, g, b, a = cpx[x, y]; mpx[x, y] = 255 if min(r, g, b) > 200 else 0
-og.paste(Image.new("RGB", cube.size, (255, 255, 255)), (110, 165), mask)
-d = ImageDraw.Draw(og)
-def font(name, size):
-    try: return ImageFont.truetype(f"C:/Windows/Fonts/{name}", size)
-    except OSError: return ImageFont.load_default()
-d.text((470, 205), "Gama_Labs", font=font("segoeuib.ttf", 92), fill="white")
-d.text((474, 325), "Apprendre · Créer · Impacter", font=font("seguisb.ttf", 40), fill=(255, 255, 255))
-d.text((474, 385), "Sites, applications et logiciels sur mesure · Abidjan", font=font("seguisb.ttf", 28), fill=(225, 240, 255))
-og.save(OUT / "og-image.jpg", quality=88)
+# Image de partage : le logo tel quel, sans modification
+shutil.copy(SRC / "assets/icon-gama.png", OUT / "og-image.png")
 
 (OUT / "site.webmanifest").write_text(
     '{"name":"Gama_Labs","short_name":"Gama_Labs","lang":"fr","start_url":"/","display":"browser",'
@@ -132,15 +110,15 @@ HEAD = """<title>Gama_Labs · Sites, applications et logiciels sur mesure à Abi
 <meta property="og:url" content="https://www.gama-labs.com/">
 <meta property="og:title" content="Gama_Labs · Apprendre · Créer · Impacter">
 <meta property="og:description" content="Sites web, applications web et mobiles, logiciels dédiés. Startup tech basée à Abidjan.">
-<meta property="og:image" content="https://www.gama-labs.com/og-image.jpg">
-<meta property="og:image:width" content="1200">
-<meta property="og:image:height" content="630">
+<meta property="og:image" content="https://www.gama-labs.com/og-image.png">
+<meta property="og:image:width" content="640">
+<meta property="og:image:height" content="640">
 <meta property="og:image:alt" content="Gama_Labs · Apprendre · Créer · Impacter">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://www.gama-labs.com/og-image.jpg">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.gama-labs.com/og-image.png">
 <script type="application/ld+json">
 {"@context":"https://schema.org","@type":"Organization","name":"Gama_Labs","url":"https://www.gama-labs.com/",
- "logo":"https://www.gama-labs.com/icon-512.png","image":"https://www.gama-labs.com/og-image.jpg",
+ "logo":"https://www.gama-labs.com/icon-512.png","image":"https://www.gama-labs.com/og-image.png",
  "slogan":"Apprendre · Créer · Impacter",
  "description":"Startup tech basée à Abidjan : sites web, applications web et mobiles, logiciels dédiés.",
  "email":"gamalabs2.0@gmail.com","telephone":"+225 01 72 48 93 31",
