@@ -57,14 +57,54 @@ for rel in used:
     html = html.replace(rel, dst_rel)
 print(f"Images : {len(used)} fichiers, {before/1e6:.1f} Mo -> {after/1e6:.1f} Mo")
 
-# Icônes et image de partage
-logo = Image.open(SRC / "assets/logo-gama-cube.png").convert("RGBA")
-logo.resize((32, 32), Image.LANCZOS).save(OUT / "favicon.png")
-logo.resize((180, 180), Image.LANCZOS).save(OUT / "apple-touch-icon.png")
-og = Image.new("RGB", (1200, 630), (247, 247, 244))
-l2 = logo.copy(); l2.thumbnail((300, 300))
-og.paste(l2, ((1200 - l2.width) // 2, (630 - l2.height) // 2), l2)
-og.save(OUT / "og-image.jpg", quality=85)
+# Icônes (onglet, iPhone, Android) à partir du carré dégradé + cube blanc
+from PIL import ImageDraw, ImageFont
+icon = Image.open(SRC / "assets/icon-gama.png").convert("RGBA")
+icon.resize((48, 48), Image.LANCZOS).save(OUT / "favicon.png", optimize=True)
+icon.save(OUT / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48)])
+icon.convert("RGB").resize((180, 180), Image.LANCZOS).save(OUT / "apple-touch-icon.png", optimize=True)
+for s in (192, 512):
+    icon.resize((s, s), Image.LANCZOS).save(OUT / f"icon-{s}.png", optimize=True)
+
+# Image de partage 1200x630 : même dégradé, cube, nom et slogan
+W, H = 1200, 630
+c1, c2 = (91, 222, 230), (1, 75, 174)
+og = Image.new("RGB", (W, H))
+px = og.load()
+for x in range(W):
+    t = x / (W - 1); col = tuple(round(a + (b - a) * t) for a, b in zip(c1, c2))
+    for y in range(H): px[x, y] = col
+cube = icon.crop((120, 120, 520, 520)).resize((300, 300), Image.LANCZOS)   # cube blanc seul, fond identique au dégradé
+mask = Image.new("L", cube.size, 0)
+cpx, mpx = cube.load(), mask.load()
+for x in range(cube.width):
+    for y in range(cube.height):
+        r, g, b, a = cpx[x, y]; mpx[x, y] = 255 if min(r, g, b) > 200 else 0
+og.paste(Image.new("RGB", cube.size, (255, 255, 255)), (110, 165), mask)
+d = ImageDraw.Draw(og)
+def font(name, size):
+    try: return ImageFont.truetype(f"C:/Windows/Fonts/{name}", size)
+    except OSError: return ImageFont.load_default()
+d.text((470, 205), "Gama_Labs", font=font("segoeuib.ttf", 92), fill="white")
+d.text((474, 325), "Apprendre · Créer · Impacter", font=font("seguisb.ttf", 40), fill=(255, 255, 255))
+d.text((474, 385), "Sites, applications et logiciels sur mesure · Abidjan", font=font("seguisb.ttf", 28), fill=(225, 240, 255))
+og.save(OUT / "og-image.jpg", quality=88)
+
+(OUT / "site.webmanifest").write_text(
+    '{"name":"Gama_Labs","short_name":"Gama_Labs","lang":"fr","start_url":"/","display":"browser",'
+    '"background_color":"#F7F7F4","theme_color":"#1D4ED8",'
+    '"icons":[{"src":"/icon-192.png","sizes":"192x192","type":"image/png"},{"src":"/icon-512.png","sizes":"512x512","type":"image/png"}]}',
+    encoding="utf8")
+
+# Sitemap et robots.txt (adresse officielle du site)
+from datetime import date
+SITE_URL = "https://www.gama-labs.com"
+(OUT / "sitemap.xml").write_text(f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>{SITE_URL}/</loc><lastmod>{date.today().isoformat()}</lastmod><changefreq>monthly</changefreq><priority>1.0</priority></url>
+</urlset>
+""", encoding="utf8")
+(OUT / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {SITE_URL}/sitemap.xml\n", encoding="utf8")
 
 # ---------- 3. Vidéo compressée + image d'attente ----------
 vids = sorted(set(re.findall(r'assets/[A-Za-z0-9_./-]+\.mp4', html)))
@@ -79,14 +119,35 @@ for rel in vids:
 # ---------- 4. En-tête : SEO, partage, icônes, améliorations ----------
 HEAD = """<title>Gama_Labs · Sites, applications et logiciels sur mesure à Abidjan</title>
 <meta name="description" content="Gama_Labs conçoit des sites web, applications web et mobiles et logiciels dédiés qui simplifient le quotidien. Startup tech basée à Abidjan. Apprendre · Créer · Impacter.">
-<meta name="theme-color" content="#F7F7F4">
-<link rel="icon" type="image/png" href="favicon.png">
-<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<link rel="canonical" href="https://www.gama-labs.com/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="theme-color" content="#1D4ED8">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" href="/favicon.png">
+<link rel="apple-touch-icon" href="/apple-touch-icon.png">
+<link rel="manifest" href="/site.webmanifest">
 <meta property="og:type" content="website">
+<meta property="og:site_name" content="Gama_Labs">
+<meta property="og:locale" content="fr_FR">
+<meta property="og:url" content="https://www.gama-labs.com/">
 <meta property="og:title" content="Gama_Labs · Apprendre · Créer · Impacter">
 <meta property="og:description" content="Sites web, applications web et mobiles, logiciels dédiés. Startup tech basée à Abidjan.">
-<meta property="og:image" content="/og-image.jpg">
+<meta property="og:image" content="https://www.gama-labs.com/og-image.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Gama_Labs · Apprendre · Créer · Impacter">
 <meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://www.gama-labs.com/og-image.jpg">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"Organization","name":"Gama_Labs","url":"https://www.gama-labs.com/",
+ "logo":"https://www.gama-labs.com/icon-512.png","image":"https://www.gama-labs.com/og-image.jpg",
+ "slogan":"Apprendre · Créer · Impacter",
+ "description":"Startup tech basée à Abidjan : sites web, applications web et mobiles, logiciels dédiés.",
+ "email":"gamalabs2.0@gmail.com","telephone":"+225 01 72 48 93 31",
+ "address":{"@type":"PostalAddress","addressLocality":"Abidjan","addressCountry":"CI"},
+ "areaServed":"CI",
+ "knowsAbout":["Développement web","Applications mobiles","Logiciels sur mesure","Transformation digitale","Intelligence artificielle"]}
+</script>
 <link rel="preconnect" href="https://unpkg.com" crossorigin>
 <link rel="stylesheet" href="enhance.css">
 <script src="enhance.js" defer></script>
