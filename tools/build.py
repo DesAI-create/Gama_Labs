@@ -127,7 +127,7 @@ HEAD = """<title>Gama_Labs · Sites, applications et logiciels sur mesure à Abi
  "logo":"https://www.gama-labs.com/icon-512.png","image":"https://www.gama-labs.com/og-image.png",
  "slogan":"Apprendre · Créer · Impacter",
  "description":"Startup tech basée à Abidjan : sites web, applications web et mobiles, logiciels dédiés.",
- "email":"contact.gama-labs@gmail.com","telephone":"+225 01 72 48 93 31",
+ "email":"contact@gama-labs.com","telephone":"+225 01 72 48 93 31",
  "address":{"@type":"PostalAddress","addressLocality":"Abidjan","addressCountry":"CI"},
  "areaServed":"CI",
  "knowsAbout":["Développement web","Applications mobiles","Logiciels sur mesure","Transformation digitale","Intelligence artificielle"]}
@@ -148,7 +148,7 @@ html = rep(html, '<a href="#formation" style="color:#111">Formation</a>\n      <
 html = rep(html, '<div style="display:flex;gap:30px;font-size:14px;font-weight:500">',
            '<div data-navlinks="1" style="display:flex;gap:26px;font-size:14px;font-weight:500">')
 # Coordonnées réelles
-html = html.replace("mailto:contact@gamalabs.tech", "mailto:contact.gama-labs@gmail.com")
+html = html.replace("mailto:contact@gamalabs.tech", "mailto:contact@gama-labs.com")
 html = re.sub(r'<a href="#"([^>]*>\s*<span[^>]*>\s*<span[^>]*>WhatsApp)', r'<a href="https://wa.me/2250172489331" target="_blank" rel="noopener"\1', html)
 html = re.sub(r'<a href="#"([^>]*>\s*<span[^>]*>\s*<span[^>]*>Bureau)', r'<a href="https://maps.google.com/?q=Abidjan,+Côte+d%27Ivoire" target="_blank" rel="noopener"\1', html)
 # Réseaux sociaux pas encore créés : retirés
@@ -162,7 +162,7 @@ if 'href="#"' in html: fail("il reste des liens href=\"#\"")
 
 # ---------- 6. Formulaires réels (FormSubmit : envoi direct par e-mail, fonctionne sur Vercel) ----------
 # Au tout premier envoi, FormSubmit envoie un e-mail d'activation à l'adresse : il faut cliquer sur « Activate Form ».
-MAIL = "contact.gama-labs@gmail.com"
+MAIL = "contact@gama-labs.com"
 POST = ("fetch('https://formsubmit.co/ajax/" + MAIL + "',{method:'POST',headers:{'Content-Type':'application/json','Accept':'application/json'},"
         "body:JSON.stringify(%s)}).then(r=>r.json().then(j=>{ if(!r.ok||String(j.success)!=='true') throw new Error(j.message||r.status); return j; }))")
 html = rep(html, "submit: e=>{e.preventDefault();this.setState({sent:true});},",
@@ -175,7 +175,7 @@ html = rep(html, "wlSubmit:e=>{ e.preventDefault(); const l=",
   "wlSubmit:e=>{ e.preventDefault(); " + (POST % "{_subject:'Liste d’attente formations : '+(S.wlName||''),_template:'table',_captcha:'false',Nom:S.wlName||'',email:S.wlEmail||'',_replyto:S.wlEmail||'',Interets:(wl||[]).join(', ')}") + ".catch(()=>{}); const l=")
 
 FORMS = """
-<noscript><p style="padding:24px;font-family:system-ui">Ce site nécessite JavaScript. Contact : contact.gama-labs@gmail.com · WhatsApp +225 01 72 48 93 31</p></noscript>
+<noscript><p style="padding:24px;font-family:system-ui">Ce site nécessite JavaScript. Contact : contact@gama-labs.com · WhatsApp +225 01 72 48 93 31</p></noscript>
 """
 html = rep(html, "</body>", FORMS + "</body>")
 
