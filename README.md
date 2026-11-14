@@ -21,7 +21,7 @@ Site vitrine de Gama_Labs (Apprendre · Créer · Impacter), conçu avec Claude 
 ## Déploiement Netlify
 
 - Netlify lit `netlify.toml` : il publie le dossier `site/`, sans commande de construction.
-- Formulaires : **contact** et **liste-attente** apparaissent dans Netlify > Forms après le premier déploiement. Activer les notifications e-mail vers contact.gama-labs@gmail.com.
+- Formulaires : **contact** et **liste-attente** apparaissent dans Netlify > Forms après le premier déploiement. Activer les notifications e-mail vers contact@gama-labs.com.
 
 ## À faire
 
