@@ -20,7 +20,7 @@ var ONGLET_ATTENTE = "Liste d'attente";
 var ONGLET_INSCRITS = 'Inscrits';
 
 function doGet(e) {
-  var attente = onglet_(ONGLET_ATTENTE, ['Date', 'Nom', 'E-mail', 'Intérêts']);
+  var attente = onglet_(ONGLET_ATTENTE, ['Date', 'Nom', 'E-mail', 'Téléphone', 'Profession', 'Intérêts']);
   return json_({ ok: true, events: stats_(), waitlist: Math.max(0, attente.getLastRow() - 1) });
 }
 
@@ -43,10 +43,10 @@ function doPost(e) {
 function inscrireAttente_(d) {
   var email = norm_(d.email);
   if (!email || !d.nom) return { ok: false, code: 'missing' };
-  var sh = onglet_(ONGLET_ATTENTE, ['Date', 'Nom', 'E-mail', 'Intérêts']);
+  var sh = onglet_(ONGLET_ATTENTE, ['Date', 'Nom', 'E-mail', 'Téléphone', 'Profession', 'Intérêts']);
   var ligne = trouver_(sh, 3, email);
-  var valeurs = [new Date(), String(d.nom).trim(), email, String(d.interets || '')];
-  if (ligne) sh.getRange(ligne, 1, 1, 4).setValues([valeurs]);   // déjà inscrit : on met à jour
+  var valeurs = [new Date(), String(d.nom).trim(), email, String(d.telephone || ''), String(d.profession || ''), String(d.interets || '')];
+  if (ligne) sh.getRange(ligne, 1, 1, 6).setValues([valeurs]);   // déjà inscrit : on met à jour
   else sh.appendRow(valeurs);
   return { ok: true };
 }
@@ -59,7 +59,7 @@ function reserverTicket_(d) {
   if (!email || !d.nom) return { ok: false, code: 'missing' };
 
   // Obligatoire : être sur la liste d'attente
-  var attente = onglet_(ONGLET_ATTENTE, ['Date', 'Nom', 'E-mail', 'Intérêts']);
+  var attente = onglet_(ONGLET_ATTENTE, ['Date', 'Nom', 'E-mail', 'Téléphone', 'Profession', 'Intérêts']);
   if (!trouver_(attente, 3, email)) return { ok: false, code: 'not_waitlisted' };
 
   var sh = onglet_(ONGLET_INSCRITS, ['Date', 'Formation', 'Nom', 'E-mail', 'Téléphone']);
