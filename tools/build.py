@@ -133,9 +133,15 @@ HEAD = """<title>Gama_Labs · Sites, applications et logiciels sur mesure à Abi
  "knowsAbout":["Développement web","Applications mobiles","Logiciels sur mesure","Transformation digitale","Intelligence artificielle"]}
 </script>
 <link rel="preconnect" href="https://unpkg.com" crossorigin>
+<script>window.GAMA_API=__GAMA_API__;</script>
 <link rel="stylesheet" href="enhance.css">
 <script src="enhance.js" defer></script>
 """
+API_FILE = ROOT / "config" / "api-url.txt"
+API = API_FILE.read_text(encoding="utf8").strip() if API_FILE.exists() else ""
+if not API: print("ATTENTION : config/api-url.txt est vide, les réservations de tickets seront désactivées.")
+import json as _json
+HEAD = HEAD.replace("__GAMA_API__", _json.dumps(API))
 html = rep(html, '<meta name="viewport" content="width=device-width, initial-scale=1">',
            '<meta name="viewport" content="width=device-width, initial-scale=1">\n' + HEAD)
 html = html.replace("<html>", '<html lang="fr">', 1)
@@ -171,8 +177,7 @@ html = rep(html, "submit: e=>{e.preventDefault();this.setState({sent:true});},",
   "Nom:i[0]?i[0].value:'',Structure:i[1]?i[1].value:'',email:i[2]?i[2].value:'',_replyto:i[2]?i[2].value:'',Besoin:this.state.ptype??'Site web',Budget:this.state.budget??'1 – 5 M',Message:t?t.value:''};"
   " if(b) b.disabled=true; " + (POST % "d") + ".then(()=>this.setState({sent:true}))"
   ".catch(()=>{ if(b) b.disabled=false; window.alert(\"L'envoi a échoué. Écrivez-nous à " + MAIL + " ou sur WhatsApp au +225 01 72 48 93 31.\"); }); },")
-html = rep(html, "wlSubmit:e=>{ e.preventDefault(); const l=",
-  "wlSubmit:e=>{ e.preventDefault(); " + (POST % "{_subject:'Liste d’attente formations : '+(S.wlName||''),_template:'table',_captcha:'false',Nom:S.wlName||'',email:S.wlEmail||'',_replyto:S.wlEmail||'',Interets:(wl||[]).join(', ')}") + ".catch(()=>{}); const l=")
+# La liste d'attente est enregistrée dans le Google Sheets (voir google-sheets/), directement par la page.
 
 FORMS = """
 <noscript><p style="padding:24px;font-family:system-ui">Ce site nécessite JavaScript. Contact : contact@gama-labs.com · WhatsApp +225 01 72 48 93 31</p></noscript>
