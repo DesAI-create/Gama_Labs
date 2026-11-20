@@ -1,6 +1,6 @@
 # Site Gama_Labs
 
-Site vitrine de Gama_Labs (Apprendre · Créer · Impacter), conçu avec Claude Design et préparé pour Netlify.
+Site vitrine de Gama_Labs (Apprendre · Créer · Impacter), conçu avec Claude Design et déployé sur Vercel.
 
 ## Structure
 
@@ -16,7 +16,7 @@ Site vitrine de Gama_Labs (Apprendre · Créer · Impacter), conçu avec Claude 
 1. Remplacer `source/Gama_Labs.dc.html` (et `source/assets/` si besoin) par le nouvel export Claude Design.
 2. Lancer `python tools/build.py` (nécessite Python, `pip install pillow` et ffmpeg).
 3. Vérifier en local : `python -m http.server 5174 --directory site` puis ouvrir http://localhost:5174.
-4. Commit et push : Netlify publie automatiquement.
+4. Commit et push : Vercel republie automatiquement depuis la branche GitHub configurée.
 
 ## Déploiement Netlify
 
@@ -29,3 +29,7 @@ Site vitrine de Gama_Labs (Apprendre · Créer · Impacter), conçu avec Claude 
 - Remettre les liens réseaux sociaux quand les comptes existent (retirés pour l'instant).
 - Billetterie des formations : le paiement est encore simulé, à brancher par l'équipe.
 - Nom de domaine : à configurer plus tard dans Netlify.
+
+## NotebookLM — inscription gratuite (100 places)
+
+Voir `google-sheets/README.md`. Les modifications doivent être réalisées dans `source/Gama_Labs.dc.html` puis reconstruites dans `site/index.html`. Le compteur de places, le formulaire de ticket et la liste d’attente utilisent `/api/gama`. Le webinaire NotebookLM n'a pas de moyen de paiement.

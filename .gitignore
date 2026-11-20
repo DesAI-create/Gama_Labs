@@ -12,3 +12,7 @@ __pycache__/
 Thumbs.db
 desktop.ini
 .netlify/
+
+debug.log
+
+cd..

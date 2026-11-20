@@ -1,0 +1,39 @@
+GAMA_LABS — INTÉGRATION NOTEBOOKLM
+================================
+
+1) SCRIPT GOOGLE APPS SCRIPT
+Le code Code.gs mis à jour (email avec logos, 100 places, statut) doit être publié
+via Déployer > Gérer les déploiements > Modifier > Nouvelle version > Déployer.
+Conserver l'URL /exec du déploiement existant.
+
+2) SITE VERCEL
+Le site appelle /api/gama (défini dans site/index.html et le fichier source).
+La fonction api/gama.js transmet les demandes à Google Apps Script.
+Elle contient déjà l'URL /exec utilisée dans le projet précédent.
+Si vous avez créé un nouveau déploiement Apps Script avec une autre URL,
+remplacer APPS_SCRIPT_URL en première partie de api/gama.js.
+
+3) MISE EN LIGNE
+Décompresser l'archive, remplacer les fichiers correspondants de votre dépôt GitHub,
+faire un commit et push sur la branche liée à Vercel.
+Le dossier site/ a déjà été reconstruit, il n'est pas nécessaire de lancer build.py.
+
+4) TEST SANS CONSOMMER DE PLACE
+Ouvrir https://VOTRE-SITE-VERCEL/api/gama dans le navigateur.
+La réponse attendue contient events.notebooklm-2026-11-28.taken et capacity:100.
+Cela vérifie le compteur sans inscrire de participant.
+
+5) TEST RÉEL (CONSOMME UNE PLACE)
+Sur le site déployé, remplir le formulaire NotebookLM avec une vraie adresse
+email de test. Vérifier l'apparition d'une ligne dans l'onglet Tickets,
+le compteur à jour, et la réception du mail. Ne pas répéter ce test avec de
+nouvelles adresses si vous voulez conserver les places restantes.
+Une nouvelle tentative avec la même adresse ne doit pas réserver une autre place.
+
+6) IMPORTANT
+Si l'API renvoie une erreur, vérifier les autorisations du déploiement Apps Script:
+Exécuter en tant que moi / accès Tout le monde, et que les images Drive
+sont accessibles au compte exécutant Apps Script.
+Le message automatique nécessite aussi que les quotas MailApp soient disponibles.
+La partie affichage du site est conservée. Le rendu dans Vercel dépend d'un
+redéploiement réussi et de la disponibilité de Google Apps Script.
