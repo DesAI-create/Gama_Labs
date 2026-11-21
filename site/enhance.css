@@ -3,7 +3,7 @@
    c'est alors body qui défile au lieu de la fenêtre : ancres, retour en haut et défilement fluide cassés. */
 html, body { height: auto !important; min-height: 100%; }
 body { overflow-x: clip !important; }
-section[id], #top { scroll-margin-top: 84px; }
+section[id], #top, #tickets { scroll-margin-top: 84px; }
 
 /* Lien de la section en cours dans le menu */
 [data-navlinks] a { position: relative; transition: color .25s ease; }
