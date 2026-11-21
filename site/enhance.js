@@ -150,15 +150,27 @@
     if (location.hash) {
       var t = document.getElementById(location.hash.slice(1));
       /* La page grandit encore pendant le chargement (images, vidéo) : on recale la position deux fois. */
+      /* Saut instantané (le défilement « smooth » du site est interrompu pendant le chargement),
+         répété tant que la page grandit (images, vidéo), sauf si le visiteur a commencé à défiler. */
       if (t) {
-        revealIn(t); t.scrollIntoView();
+        revealIn(t);
         var touched = false;
         ['wheel', 'touchstart', 'keydown', 'mousedown'].forEach(function (ev) {
           window.addEventListener(ev, function () { touched = true; }, { once: true, passive: true });
         });
-        [700, 1800].forEach(function (ms) {
-          setTimeout(function () { if (!touched && Math.abs(t.getBoundingClientRect().top - 84) > 40) t.scrollIntoView(); }, ms);
-        });
+        var hid = t.id;
+        var jump = function () {
+          if (touched) return;
+          /* Le moteur Claude Design recrée la page juste après le chargement : on relit l'élément à chaque fois. */
+          var el = document.getElementById(hid);
+          if (!el || !el.isConnected) return;
+          revealIn(el);
+          var y = el.getBoundingClientRect().top + window.scrollY - 84;
+          if (Math.abs(window.scrollY - y) > 4) window.scrollTo({ top: y, behavior: 'instant' });
+        };
+        jump();
+        [150, 500, 1000, 1800, 3000, 4500].forEach(function (ms) { setTimeout(jump, ms); });
+        window.addEventListener('load', function () { jump(); setTimeout(jump, 400); }, { once: true });
       }
     }
   })();
